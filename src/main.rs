@@ -27,7 +27,7 @@ impl Default for App {
 impl epi::App for App {
     fn update(&mut self, ctx: &egui::CtxRef, _frame: &mut epi::Frame<'_>) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("My Egui Application");
+            ui.heading("Jokerge Anti Cheat");
 
             if ui.button("Start").clicked() {
                 let output = std::process::Command::new("cmd")
@@ -44,7 +44,7 @@ impl epi::App for App {
     }
 
     fn name(&self) -> &str {
-        "My Egui Application"
+        "Jokerge Anti Cheat"
     }
 }
 
@@ -75,6 +75,10 @@ fn main() {
 
     std::thread::spawn(|| {
         client::main();
+    });
+
+    std::thread::spawn(|| {
+        server::main();
     });
 
     thread::spawn(move || {
