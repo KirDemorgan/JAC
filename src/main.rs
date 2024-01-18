@@ -24,10 +24,10 @@ async fn send_telegram_message(bot_token: &str, chat_id: &str, message: &str) ->
 
     Ok(())
 }
-
-fn main() {
-    let bot_token = env::var("6721764725:AAG_NR5XVUuBGFWsX9sO56Jajwc2alv0lPs").unwrap();
-    let chat_id = env::var("-4153113440").unwrap();
+#[tokio::main]
+async fn main() {
+    let bot_token = "6721764725:AAG_NR5XVUuBGFWsX9sO56Jajwc2alv0lPs";
+    let chat_id = "-4153113440";
     loop {
         let process_names = vec!["Code.exe", "process2", "process3"];
         let mut running_processes = HashSet::new();
@@ -38,13 +38,13 @@ fn main() {
         for (_pid, process) in sys.processes() {
             running_processes.insert(process.name().to_string());
         }
-
+        println!("-----------------------------------");
         for process_name in &process_names {
             if running_processes.contains(*process_name) {
                 println!("Process '{}' is running.", process_name);
 
-                let message = format!("Process '{}' is running.", process_name);
-                send_telegram_message(&bot_token, &chat_id, &message);
+                let message = format!("Process '{}' is running on '{}'.", process_name, env::var("USERNAME").unwrap());
+                let _ = send_telegram_message(&bot_token, &chat_id, &message).await;
 
                 match env::var("USERNAME") {
                     Ok(val) => println!("Windows username: {}", val),
@@ -54,8 +54,7 @@ fn main() {
                 println!("Process '{}' is not running.", process_name);
             }
         }
-
-
+        println!("-----------------------------------");
 
         thread::sleep(Duration::from_secs(60));
     }
