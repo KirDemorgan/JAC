@@ -1,4 +1,5 @@
-use std::net::TcpStream;
+#![allow(deprecated)]
+
 use tungstenite::{connect, Message};
 use url::Url;
 

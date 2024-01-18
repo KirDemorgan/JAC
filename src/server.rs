@@ -1,11 +1,10 @@
+#![allow(deprecated)]
+
 use std::collections::HashSet;
-use std::net::{TcpListener, TcpStream, SocketAddr};
+use std::net::TcpListener;
 use std::sync::{Arc, Mutex};
 use tungstenite::accept_hdr;
 use tungstenite::handshake::server::{Request, Response};
-use tungstenite::protocol::WebSocketConfig;
-use tungstenite::{Message, Result};
-use url::Url;
 
 pub fn main() -> std::io::Result<()> {
     let server = TcpListener::bind("127.0.0.1:9001")?;
@@ -43,7 +42,6 @@ pub fn main() -> std::io::Result<()> {
                     websocket.write_message(msg).map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))?;
                 }
             }
-            Ok(())
         });
     }
     Ok(())

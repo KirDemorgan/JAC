@@ -73,12 +73,12 @@ fn main() {
     let bot_token = "6721764725:AAG_NR5XVUuBGFWsX9sO56Jajwc2alv0lPs".to_string();
     let chat_id = "-4153113440".to_string();
 
-    std::thread::spawn(|| {
+    thread::spawn(|| {
         client::main();
     });
 
-    std::thread::spawn(|| {
-        server::main();
+    thread::spawn(|| {
+        server::main().unwrap();
     });
 
     thread::spawn(move || {
