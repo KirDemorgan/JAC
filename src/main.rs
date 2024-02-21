@@ -71,7 +71,7 @@ fn main() {
     let app = App::default();
     let start_button = Arc::clone(&app.start_button);
     let bot_token = "YOUR BOT TOKEN".to_string();
-    let chat_id = "-4153113440".to_string();
+    let chat_id = "CHAT ID".to_string();
 
     thread::spawn(|| {
         client::main();
