@@ -70,7 +70,7 @@ async fn send_telegram_message(bot_token: &str, chat_id: &str, message: &str) ->
 fn main() {
     let app = App::default();
     let start_button = Arc::clone(&app.start_button);
-    let bot_token = "6721764725:AAG_NR5XVUuBGFWsX9sO56Jajwc2alv0lPs".to_string();
+    let bot_token = "YOUR BOT TOKEN".to_string();
     let chat_id = "-4153113440".to_string();
 
     thread::spawn(|| {
