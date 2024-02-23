@@ -85,7 +85,7 @@ fn main() {
         let rt = Runtime::new().unwrap();
         loop {
             if *start_button.lock().unwrap() {
-                let process_names = vec!["Code.exe", "brave.exe", "chrome.exe"];
+                let process_names = vec!["JoyToKey.exe", "reWASDservice.exe", "reWASDdriver.exe"];
                 let mut running_processes = HashSet::new();
 
                 let mut sys = System::new_all();
