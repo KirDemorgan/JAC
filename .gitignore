@@ -1,2 +1,109 @@
-/target
-/.idea
+# --- OS Specific ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# --- IDEs and Editors ---
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+.idea/
+*.iws
+*.iml
+*.ipr
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Java IDE specific (Eclipse/STS/NetBeans)
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+
+# --- Node.js / Frontend (Next.js) ---
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+/frontend/jac-frontend/.next/
+/frontend/jac-frontend/out/
+/frontend/jac-frontend/build/
+/frontend/jac-frontend/.vercel
+/frontend/jac-frontend/coverage/
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env.local
+
+# --- Java / Gradle (Backend) ---
+.gradle/
+**/build/
+**/bin/
+!**/src/**/build/
+!**/src/**/bin/
+.gradletasknamecache
+*.class
+*.log
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+# !gradle/wrapper/gradle-wrapper.jar
+
+# --- Rust (Desktop Client) ---
+/app/jac-desk-client/target/
+# Keep Cargo.lock for applications
+# /app/jac-desk-client/Cargo.lock
+**/*.rs.bk
+
+# --- Logs and Databases ---
+logs
+*.log
+*.sql
+*.sqlite
+
+# --- Temporary Files ---
+tmp/
+temp/
+dist/
+
+# --- Production specific / Secrets ---
+.ssh/
+/secrets/
+certs/
+*.pem
+*.key
+*.p12
+*.jks
+credentials.json
+service-account.json
