@@ -7,9 +7,10 @@ edition = "2024"
 tauri = "2.11.1"
 serde = "1.0.228"
 serde_json = "1.0.149"
-reqwest = "0.13.3"
+reqwest = { version = "0.13.3", features = ["json"] }
 tokio = { version = "1.52.3", features = ["full"] }
 tracing = "0.1.44"
+chrono = { version = "0.4.40", features = ["serde"] }
 tracing-subscriber = "0.3.23"
 uuid = { version = "1.23.1", features = ["v4", "serde"] }
 sysinfo = "0.39.1"

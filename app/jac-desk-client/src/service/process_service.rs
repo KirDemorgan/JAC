@@ -3,7 +3,10 @@ use tracing::{info, warn, error};
 use crate::models::process::{ForbiddenProcess, ForbiddenProcessCheckResult, ProcessInfo};
 
 pub(crate) fn list_all_processes() -> Result<Vec<ProcessInfo>, String> {
-    let mut sys = System::new_all();
+    list_all_processes_with_system(&mut System::new_all())
+}
+
+fn list_all_processes_with_system(sys: &mut System) -> Result<Vec<ProcessInfo>, String> {
     sys.refresh_all();
 
     let processes: Vec<ProcessInfo> = sys.processes()
@@ -35,7 +38,12 @@ pub(crate) fn list_all_processes() -> Result<Vec<ProcessInfo>, String> {
 }
 
 pub(crate) fn check_forbidden_processes(forbidden_list: Vec<ForbiddenProcess>) -> Result<ForbiddenProcessCheckResult, String> {
-    let system_processes = list_all_processes()?;
+    let mut sys = System::new_all();
+    check_forbidden_processes_with_system(&mut sys, forbidden_list)
+}
+
+fn check_forbidden_processes_with_system(sys: &mut System, forbidden_list: Vec<ForbiddenProcess>) -> Result<ForbiddenProcessCheckResult, String> {
+    let system_processes = list_all_processes_with_system(sys)?;
 
     let mut found_forbidden = Vec::new();
     let mut not_found = Vec::new();
