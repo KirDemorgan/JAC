@@ -1,18 +1,19 @@
 pub mod models;
 pub mod service;
-pub mod ui;
 pub mod utils;
+pub mod logger;
+pub mod system_info;
+pub mod tauri_commands;
 
 use std::sync::Arc;
-use tracing_subscriber;
 use service::state::AppState;
 use service::scheduled::scheduled::start_process_monitor_scheduler;
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::INFO)
-        .init();
+    if let Err(e) = logger::init_logger() {
+        eprintln!("Ошибка инициализации логирования: {}", e);
+    }
 
     tracing::info!("Запуск JAC Desktop Client");
 
@@ -22,27 +23,21 @@ async fn main() {
     tracing::info!("Backend URL: {}", backend_url);
 
     let app_state = Arc::new(AppState::new(backend_url));
-
     let state_clone = Arc::clone(&app_state);
+
     tokio::spawn(async move {
         start_process_monitor_scheduler(state_clone).await;
     });
 
-    // TODO: UI инициализация Tauri
-
-    tokio::signal::ctrl_c()
-        .await
-        .expect("Failed to listen for ctrl+c");
-
-    tracing::info!("Завершение приложения");
-
-    if let Some(session) = app_state.get_session().await {
-        let api_client = service::api_client::ApiClient::new(app_state.backend_url.clone());
-        if let Err(e) = api_client.close_session(&session.session_id).await {
-            tracing::warn!("Ошибка при закрытии сессии: {}", e);
-        }
-    }
-
-    app_state.clear_session().await;
-    tracing::info!("Приложение закрыто корректно");
+    tauri::Builder::default()
+        .manage(app_state.clone())
+        .invoke_handler(tauri::generate_handler![
+            tauri_commands::get_app_status,
+            tauri_commands::check_connection,
+            tauri_commands::get_system_info,
+            tauri_commands::exit_app,
+            tauri_commands::reconnect,
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }

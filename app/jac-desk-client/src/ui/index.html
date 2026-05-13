@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/styles.css">
+    <title>JAC Desktop Client</title>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="icons/icon.png" alt="JAC Logo">
+            </div>
+            <h1>JAC Client</h1>
+            <p>Desktop Security Monitor</p>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <div class="status-section">
+            <!-- Статус подключения -->
+            <div class="status-item">
+                <span class="status-label">Статус</span>
+                <div class="connection-indicator" id="connectionStatus">
+                    <div class="indicator disconnected"></div>
+                    <span class="indicator-text">Отключено</span>
+                </div>
+            </div>
+
+            <!-- Пользователь -->
+            <div class="status-item">
+                <span class="status-label">Пользователь</span>
+                <span class="status-value" id="username">Загрузка...</span>
+            </div>
+
+            <!-- Система -->
+            <div class="status-item">
+                <span class="status-label">Система</span>
+                <span class="status-value" id="osInfo">Загрузка...</span>
+            </div>
+
+            <!-- Время -->
+            <div class="status-item">
+                <span class="status-label">Время</span>
+                <span class="status-value" id="currentTime">Загрузка...</span>
+            </div>
+
+            <!-- Хост -->
+            <div class="status-item">
+                <span class="status-label">Хост</span>
+                <span class="status-value" id="hostname">Загрузка...</span>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-reconnect" id="reconnectBtn">Переподключиться</button>
+            <button class="btn-exit" id="exitBtn">Выйти</button>
+        </div>
+
+        <div class="info-text">
+            Приложение автоматически мониторит систему каждые 10 секунд
+        </div>
+    </div>
+
+    <script src="script/app.js"></script>
+</body>
+</html>
+

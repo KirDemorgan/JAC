@@ -1,0 +1,31 @@
+{
+  "productName": "JAC Desktop Client",
+  "version": "0.1.0",
+  "identifier": "com.jac.client",
+  "build": {
+    "beforeBuildCommand": "",
+    "beforeDevCommand": "",
+    "frontendDist": "src/ui"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "JAC Desktop Client",
+        "width": 550,
+        "height": 700,
+        "resizable": false,
+        "fullscreen": false,
+        "label": "main",
+        "url": "index.html"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true
+  }
+}
+
