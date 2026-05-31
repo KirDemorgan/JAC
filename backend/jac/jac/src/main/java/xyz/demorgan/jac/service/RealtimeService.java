@@ -16,6 +16,13 @@ public class RealtimeService {
         clients.add(emitter);
         emitter.onCompletion(() -> clients.remove(emitter));
         emitter.onTimeout(() -> clients.remove(emitter));
+        // Send an initial comment so Nginx flushes the response immediately,
+        // which causes the browser's EventSource to fire onopen.
+        try {
+            emitter.send(SseEmitter.event().comment("connected"));
+        } catch (IOException ex) {
+            clients.remove(emitter);
+        }
         return emitter;
     }
 

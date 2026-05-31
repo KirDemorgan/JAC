@@ -25,6 +25,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("io.micrometer:micrometer-registry-prometheus")
 	// Argon2 password hashing
 	implementation("de.mkammerer:argon2-jvm:2.11")
