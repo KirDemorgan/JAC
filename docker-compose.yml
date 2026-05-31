@@ -1,0 +1,111 @@
+name: jac
+
+services:
+
+  # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-jac}
+      POSTGRES_USER:     ${POSTGRES_USER:-jac}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:         ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-jac} -d ${POSTGRES_DB:-jac}"]
+      interval:     10s
+      timeout:      5s
+      retries:      5
+      start_period: 20s
+    networks: [jac]
+
+  # ── Flyway migrations (init container, runs once and exits) ────────────────
+  flyway:
+    image: flyway/flyway:11-alpine
+    restart: "no"
+    command: >
+      -url=jdbc:postgresql://postgres:5432/${POSTGRES_DB:-jac}
+      -user=${POSTGRES_USER:-jac}
+      -password=${POSTGRES_PASSWORD}
+      -locations=filesystem:/flyway/sql
+      -connectRetries=5
+      migrate
+    volumes:
+      - ./backend/jac/jac/src/main/resources/db/migration:/flyway/sql:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [jac]
+
+  # ── Spring Boot Backend ────────────────────────────────────────────────────
+  backend:
+    build:
+      context:    ./backend/jac/jac
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL:      jdbc:postgresql://postgres:5432/${POSTGRES_DB:-jac}
+      DATABASE_USER:     ${POSTGRES_USER:-jac}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      JWT_SECRET:        ${JWT_SECRET:?JWT_SECRET is required}
+      ADMIN_USER:        ${ADMIN_USER:-admin}
+      ADMIN_PASSWORD:    ${ADMIN_PASSWORD:?ADMIN_PASSWORD is required}
+      SERVER_PORT:       "8080"
+      # Flyway runs in a dedicated init container — disable it here to avoid
+      # the Spring Boot 4.x initialization-order issue with Hibernate validate.
+      SPRING_FLYWAY_ENABLED: "false"
+      # With Flyway managing the schema, Hibernate should not try to validate
+      # or modify it. ddl-auto=none is the correct production setting.
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+    ports:
+      # Exposed so the Rust desktop client (BACKEND_URL=http://localhost:8080)
+      # and local frontend dev (npm run dev) can reach the backend directly.
+      - "8080:8080"
+    depends_on:
+      flyway:
+        condition: service_completed_successfully
+    healthcheck:
+      test:         ["CMD-SHELL", "curl -sf http://localhost:8080/actuator/health | grep -q UP"]
+      interval:     15s
+      timeout:      5s
+      retries:      8
+      start_period: 60s
+    networks: [jac]
+
+  # ── Next.js Frontend ───────────────────────────────────────────────────────
+  frontend:
+    build:
+      context:    ./frontend/jac-frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE: ""
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT:     "3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks: [jac]
+
+  # ── Nginx Reverse Proxy ────────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${PORT:-80}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    networks: [jac]
+
+networks:
+  jac:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

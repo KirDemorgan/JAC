@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.git/
+*.md
+__mocks__/
+tsconfig.test.json
+jest.config.ts
+jest.setup.ts
+.env*
